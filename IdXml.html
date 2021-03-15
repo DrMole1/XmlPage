@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>IdEleves</title>
+	<meta charset="utf-8">
+</head>
+<body>
+	<header>bastienprob@gmail.com</header>
+
+	<select name="IdEleves" id="IdEleves">
+    	<option value="">--Please choose an option--</option>
+    	<option value="1">Eleve 1</option>
+    	<option value="2">Eleve 2</option>
+    	<option value="3">Eleve 3</option>
+	</select>
+
+	<button onclick="loadData();">clic</button>
+
+	<textarea id="infosEleves" name="infosEleves" rows="20" cols="200"></textarea>
+
+	<footer>bastienprob@gmail.com</footer>
+
+	<script type="text/javascript">
+		function loadData(){
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() {
+    		if (this.readyState == 4 && this.status == 200) {
+
+       			let response = xhttp.responseText;
+				let responseXML = xhttp.responseXML;
+
+				var selectValue = document.getElementById("IdEleves").selectedIndex;
+
+				var x = responseXML.getElementsByTagName("eleve");
+
+				for(let i = 0; i < x.length; i++)
+				{
+					if(x[i].getAttribute("id") == selectValue)
+					{
+						document.getElementById("infosEleves").innerHTML = x[i].innerHTML;
+					}
+				}
+    		}	
+		};
+		xhttp.open("GET", "Eleves.xml", true);
+		xhttp.send(); 
+		}
+	</script>
+</body>
+</html>
