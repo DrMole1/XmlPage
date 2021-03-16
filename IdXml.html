@@ -3,8 +3,19 @@
 <head>
 	<title>IdEleves</title>
 	<meta charset="utf-8">
+	<style>
+        .page {
+        	background: yellow;
+        }
+        .lien {
+        	background: red;
+        }
+        .bordure {
+            border : 5px solid black; 
+        }
+    </style>
 </head>
-<body>
+<body class="page">
 	<header>bastienprob@gmail.com</header>
 
 	<select name="IdEleves" id="IdEleves">
@@ -14,30 +25,32 @@
     	<option value="3">Eleve 3</option>
 	</select>
 
-	<button onclick="loadData();">clic</button>
+	<button onclick="loadData();">clic</button> <br/>
 
-	<textarea id="infosEleves" name="infosEleves" rows="20" cols="200"></textarea>
+	<textarea class="bordure" id="infosEleves" name="infosEleves" rows="20" cols="150"></textarea> <br/>
+
+	<p>Retour page principale : </p><a href="index" class="lien">Page principale</a> <br/> <!--Le nom du href est à changer en Index.html si github !!!!-->
 
 	<footer>bastienprob@gmail.com</footer>
 
 	<script type="text/javascript">
 		function loadData(){
-			var xhttp = new XMLHttpRequest();
+			var xhttp = new XMLHttpRequest(); // On instantialise le XMLHttpRequest pour récupérer la fichier XML
 			xhttp.onreadystatechange = function() {
-    		if (this.readyState == 4 && this.status == 200) {
+    		if (this.readyState == 4 && this.status == 200) { // readyState pour l'état de transmission et status 200 pour fonctionnel (404 pour non fonctionnel)
 
-       			let response = xhttp.responseText;
-				let responseXML = xhttp.responseXML;
+       			let response = xhttp.responseText; // Les informations du fichier en format Texte
+				let responseXML = xhttp.responseXML; // Les informations du fichier en format XML
 
-				var selectValue = document.getElementById("IdEleves").selectedIndex;
+				var selectValue = document.getElementById("IdEleves").selectedIndex; // On récupère la value du sélecteur
 
-				var x = responseXML.getElementsByTagName("eleve");
+				var x = responseXML.getElementsByTagName("eleve"); // On récupère les éléments du tag name eleve
 
 				for(let i = 0; i < x.length; i++)
 				{
-					if(x[i].getAttribute("id") == selectValue)
+					if(x[i].getAttribute("id") == selectValue) // Si l'id de l'élève = la value du sélecteur
 					{
-						document.getElementById("infosEleves").innerHTML = x[i].innerHTML;
+						document.getElementById("infosEleves").innerHTML = x[i].innerHTML; // Alors on l'affiche dans le TextArea
 					}
 				}
     		}	

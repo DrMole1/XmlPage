@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>HttpRequestXPath</title>
+	<meta charset="utf-8">
+	<style>
+        .page {
+        	background: yellow;
+        }
+        .lien {
+        	background: red;
+        }
+        .bordure {
+            border : 5px solid black; 
+        }
+    </style>
+</head>
+<body class="page">
+	
+	<header>bastienprob@gmail.com</header>
+
+	<h1>Manipulation XPath</h1>
+
+	<button onclick="loadData();">clic</button> <br/>
+
+	<textarea class="bordure" id="xPathFilms" name="xPathFilms" rows="20" cols="150"></textarea> <br/>
+
+	<p>Films qui datent d'après 1960 : </p>
+	<textarea class="bordure" id="films1900" name="film1900" rows="20" cols="150"></textarea> <br/>
+
+	<p>Premier film </p>
+	<textarea class="bordure" id="firstfilm" name="firstfilm" rows="10" cols="100"></textarea> <br/>
+
+	<p>Dernier film </p>
+	<textarea class="bordure" id="lastfilm" name="lastfilm" rows="10" cols="100"></textarea> <br/>
+
+	<p>Retour page principale : </p><a href="index" class="lien">Page principale</a> <br/> <!--Le nom du href est à changer en Index.html si github !!!!-->
+
+	<footer>bastienprob@gmail.com</footer>
+
+	<script type="text/javascript">
+		function loadData(){
+			var xhttp = new XMLHttpRequest(); // On instantialise le XMLHttpRequest pour récupérer la fichier XML
+			xhttp.onreadystatechange = function() {
+    		if (this.readyState == 4 && this.status == 200) { // readyState pour l'état de transmission et status 200 pour fonctionnel (404 pour non fonctionnel)
+
+       			let response = xhttp.responseText; // Les informations du fichier en format Texte
+				let responseXML = xhttp.responseXML; // Les informations du fichier en format XML
+
+				showResult(responseXML); // Appel de la fonction showResult avec responseXML en paramètre
+    		}	
+		};
+		xhttp.open("GET", "MesFilms.xml", true);
+		xhttp.send(); 
+		}
+
+		function showResult(xml){
+			// Déclaration d'une variable string pour regroupper les données
+			var txt = "";
+			// Tous les noeuds titres dans le path
+			path = "/lesfilms/film/titre";
+
+			// Si l'XML est fonctionnel
+			if(xml.evaluate){
+				var nodes = xml.evaluate(path, xml, null, XPathResult.ANY_TYPE, null);  // On créée le noeud avec le path et la responseXML
+				var result = nodes.iterateNext(); // On va au prochain noeud
+				while(result){  // Tant que le noeud contient une valeur
+					txt += result.childNodes[0].nodeValue + "\n";  // On concatène la valeur de ce noeud au txt
+					result = nodes.iterateNext(); // On va au prochain noeud
+				}
+			}
+			else if(window.ActiveXObject || xhttp.responseType == "msxml-document"){ // Pour rendre le XML fonctionnel
+				xml.setProperty("SelectionLanguage", "XPath"); // On set le format de l'XML en XPath
+				nodes = xml.selectNodes(path);
+				for(i = 0; i < nodes.length; i++){
+					txt += nodes[i].childNodes[0].nodeValue + "<br>";
+				}
+			}
+
+			document.getElementById("xPathFilms").innerHTML = txt;
+
+			// titre de film dont la date est supérieure à 1960
+			path = "/lesfilms/film[date>1960]/titre[text()]";
+			txt = "";
+
+			if(xml.evaluate){
+				var nodes = xml.evaluate(path, xml, null, XPathResult.ANY_TYPE, null);  // On créée le noeud avec le path et la responseXML
+				var result = nodes.iterateNext(); // On va au prochain noeud
+				while(result){  // Tant que le noeud contient une valeur
+					txt += result.childNodes[0].nodeValue + "\n";  
+					result = nodes.iterateNext(); 
+				}
+			}
+
+			document.getElementById("films1900").innerHTML = txt;
+
+			// premier film
+			path = "/lesfilms/film[1]/titre[text()]";
+			txt = "";
+
+			if(xml.evaluate){
+				var nodes = xml.evaluate(path, xml, null, XPathResult.ANY_TYPE, null);  // On créée le noeud avec le path et la responseXML
+				var result = nodes.iterateNext(); // On va au prochain noeud
+				while(result){  // Tant que le noeud contient une valeur
+					txt += result.childNodes[0].nodeValue + "\n";  
+					result = nodes.iterateNext(); 
+				}
+			}
+
+			document.getElementById("firstfilm").innerHTML = txt;
+
+			// dernier film
+			path = "/lesfilms/film[10]/titre[text()]";
+			txt = "";
+
+			if(xml.evaluate){
+				var nodes = xml.evaluate(path, xml, null, XPathResult.ANY_TYPE, null);  // On créée le noeud avec le path et la responseXML
+				var result = nodes.iterateNext(); // On va au prochain noeud
+				while(result){  // Tant que le noeud contient une valeur
+					txt += result.childNodes[0].nodeValue + "\n";  
+					result = nodes.iterateNext(); 
+				}
+			}
+
+			document.getElementById("lastfilm").innerHTML = txt;
+		}
+	</script>
+</body>
+</html>

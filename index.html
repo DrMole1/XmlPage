@@ -3,29 +3,52 @@
 <head>
 	<title>HttpRequest</title>
 	<meta charset="utf-8">
+	<style>
+        .page {
+        	background: yellow;
+        }
+        .lien {
+        	background: red;
+        }
+        .bordure {
+            border : 5px solid black; 
+        }
+    </style>
 </head>
-<body>
+<body class="page">
+	<header>bastienprob@gmail.com</header>
 
-	<textarea id="xmlArea" name="xmlArea" rows="20" cols="50"></textarea>
-	<textarea id="titresEleves" name="titresEleves" rows="20" cols="50"></textarea>
-	<textarea id="infosEleves" name="infosEleves" rows="20" cols="200"></textarea>
+	<p>Cliquer sur le bouton pour démarrer : </p>
+	<button onclick="loadData();">Cliquer</button> <br/>  
 
-	<button onclick="loadData();">clic</button>
+	<h1>Manipuler responseXML</h1>
 
-	<a href="IdXml">IdXml</a>
+	<textarea class="bordure" id="xmlArea" name="xmlArea" rows="20" cols="50"></textarea>
+	<textarea class="bordure" id="titresEleves" name="titresEleves" rows="20" cols="50"></textarea>
+	<textarea class="bordure" id="infosEleves" name="infosEleves" rows="10" cols="150"></textarea>
+
+	<p>Direction vers la page des ID des élèves (avec le sélecteur) : </p><a href="IdXml" class="lien">Page ID élèves</a> <br/>
+
+	<h2>Manipuler response</h2>
+
+	<textarea class="bordure" id="textEleves" name="textEleves" rows="10" cols="150"></textarea>
+
+	<p>Direction vers la page des XPath : </p><a href="HttpRequest_XPath" class="lien">XPath</a> <br/>
+
+	<footer>bastienprob@gmail.com</footer>
 
 	<script type="text/javascript">
 		function loadData(){
-			var xhttp = new XMLHttpRequest();
+			var xhttp = new XMLHttpRequest();  // On instantialise le XMLHttpRequest pour récupérer la fichier XML
 			xhttp.onreadystatechange = function() {
-    		if (this.readyState == 4 && this.status == 200) {
-       			let response = xhttp.responseText;
-				let responseXML = xhttp.responseXML;
+    		if (this.readyState == 4 && this.status == 200) {  // readyState pour l'état de transmission et status 200 pour fonctionnel (404 pour non fonctionnel)
+       			let response = xhttp.responseText;  // Les informations du fichier en format Texte
+				let responseXML = xhttp.responseXML; // Les informations du fichier en format XML
 
 				//let container = document.getElementById('container');
 				//container.innerHTML = response;
 
-
+				// On déclare des variables TABLEAU dans lesquelles on affecte les éléments du fichier XML par TagName (utiliser responseXML !!!!)
 				let nomData = responseXML.getElementsByTagName("nom");
 				let prenomData = responseXML.getElementsByTagName("prenom");
 				let ageData = responseXML.getElementsByTagName("age");
@@ -36,6 +59,7 @@
 				let titres = "";
             	let infos = "";
 
+            	// Manipulation du DOM pour trier les données (utilisation boucle car plusieurs élèves)
 				for (let index = 0; index < nomData.length; index++) {
 
                 	const element = nomData[index];
@@ -45,18 +69,80 @@
                 	const element5 = domicileData[index];
                 	const element6 = telephoneData[index];
 
+                	// Regroupement des données (utilisation inner.HTML !!!)
                 	titres = titres + element.innerHTML + "\n";
                 	infos = infos + "Nom : " + element.innerHTML + " Prenom : " + element2.innerHTML + " Age : " + element3.innerHTML + " Niveau : " + element4.innerHTML + " Domicile : " + element5.innerHTML + " Telephone : " + element6.innerHTML +"\n";
             	}
+            	// Récupération des TextArea pour y affecter les variables string
             	document.getElementById("xmlArea").innerHTML = response;
             	document.getElementById("titresEleves").innerHTML = titres;
             	document.getElementById("infosEleves").innerHTML = infos;
+
+            	// Manipuler les chaines de caractères de response avec la méthode split
+            	var splitEleves = response.split("</eleve>");
+            	// Déclaration des strings d'infos
+            	var infoNom = "Nom : ";
+            	var infoPrenom = "Prenom : ";
+            	var infoAge = "Age : ";
+            	var infoNiveau = "Niveau : ";
+            	var infoDomicile = "Domicile : ";
+            	var infoTelephone = "Telephone : ";
+
+            	// Manipulation dans boucles pour split les infos pour les récupérer
+				for(let i = 0; i < splitEleves.length; i++)
+				{
+					var splitNom = splitEleves[i].split("<nom>");
+					if(splitNom[1] != null) {
+						var splitNom2 = splitNom[1].split("</nom>");
+						var textNom = splitNom2[0];
+						infoNom = infoNom + " " + textNom;
+					}
+
+					var splitPrenom = splitEleves[i].split("<prenom>");
+					if(splitPrenom[1] != null) {
+						var splitPrenom2 = splitPrenom[1].split("</prenom>");
+						var textPrenom = splitPrenom2[0];
+						infoPrenom = infoPrenom + " " + textPrenom;
+					}
+
+					var splitAge = splitEleves[i].split("<age>");
+					if(splitAge[1] != null) {
+						var splitAge2 = splitAge[1].split("</age>");
+						var textAge = splitAge2[0];
+						infoAge = infoAge + " " + textAge;
+					}
+
+					var splitNiveau = splitEleves[i].split("<niveau>");
+					if(splitNiveau[1] != null) {
+						var splitNiveau2 = splitNiveau[1].split("</niveau>");
+						var textNiveau = splitNiveau2[0];
+						infoNiveau = infoNiveau + " " + textNiveau;
+					}
+
+					var splitDomicile = splitEleves[i].split("<domicile>");
+					if(splitDomicile[1] != null) {
+						var splitDomicile2 = splitDomicile[1].split("</domicile>");
+						var textDomicile = splitDomicile2[0];
+						infoDomicile = infoDomicile + " " + textDomicile;
+					}
+
+					var splitTelephone = splitEleves[i].split("<telephone>");
+					if(splitTelephone[1] != null) {
+						var splitTelephone2 = splitTelephone[1].split("</telephone>");
+						var textTelephone = splitTelephone2[0];
+						infoTelephone = infoTelephone + " / " + textTelephone;
+					}
+				}
+
+				// Regroupement des infos puis mise en place dans le TextArea correspondant
+				infos = infoNom + "\n" + infoPrenom + "\n" + infoAge + "\n" + infoNiveau + "\n" + infoDomicile + "\n" + infoTelephone + "\n";
+				document.getElementById("textEleves").innerHTML = infos;
     		}	
 		};
+		// Ne pas oublier d'ouvrir et envoyer (nom du fichier en 2e argument)
 		xhttp.open("GET", "Eleves.xml", true);
 		xhttp.send(); 
 		}
-
 	</script>
 
 </body>
